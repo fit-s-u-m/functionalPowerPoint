@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <title></title>
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/black.css" id="theme" />
+    <link rel="stylesheet" href="plugin/highlight/zenburn.css" />
+	<link rel="stylesheet" href="css/layout.css" />
+	<link rel="stylesheet" href="plugin/customcontrols/style.css">
+
+
+
+    <script defer src="dist/fontawesome/all.min.js"></script>
+
+	<script type="text/javascript">
+		var forgetPop = true;
+		function onPopState(event) {
+			if(forgetPop){
+				forgetPop = false;
+			} else {
+				parent.postMessage(event.target.location.href, "app://obsidian.md");
+			}
+        }
+		window.onpopstate = onPopState;
+		window.onmessage = event => {
+			if(event.data == "reload"){
+				window.document.location.reload();
+			}
+			forgetPop = true;
+		}
+
+		function fitElements(){
+			const itemsToFit = document.getElementsByClassName('fitText');
+			for (const item in itemsToFit) {
+				if (Object.hasOwnProperty.call(itemsToFit, item)) {
+					var element = itemsToFit[item];
+					fitElement(element,1, 1000);
+					element.classList.remove('fitText');
+				}
+			}
+		}
+
+		function fitElement(element, start, end){
+
+			let size = (end + start) / 2;
+			element.style.fontSize = `${size}px`;
+
+			if(Math.abs(start - end) < 1){
+				while(element.scrollHeight > element.offsetHeight){
+					size--;
+					element.style.fontSize = `${size}px`;
+				}
+				return;
+			}
+
+			if(element.scrollHeight > element.offsetHeight){
+				fitElement(element, start, size);
+			} else {
+				fitElement(element, size, end);
+			}		
+		}
+
+
+		document.onreadystatechange = () => {
+			fitElements();
+			if (document.readyState === 'complete') {
+				if (window.location.href.indexOf("?export") != -1){
+					parent.postMessage(event.target.location.href, "app://obsidian.md");
+				}
+				if (window.location.href.indexOf("print-pdf") != -1){
+					let stateCheck = setInterval(() => {
+						clearInterval(stateCheck);
+						window.print();
+					}, 250);
+				}
+			}
+	};
+
+
+        </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides"><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Functional programming
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Concepts to know when we  write the functions
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# 1. No Side Effect 
+
+### Functions should only convert input to output nothing else
+----
+```ts
+function add(x:number){
+ console.log(x) // this is side Effect
+ return x+1
+}
+```
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+```ts
+const add = (x:number) => x+1;
+```
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Don't think functions as procedures like your writing assembly
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+```asm
+; A simple 8086 Assembly program to print "Hello, World!"
+
+.MODEL SMALL           ; Use the small memory model (1 code + 1 data segment)
+.STACK 100h            ; Reserve 256 bytes for the stack
+
+.DATA                  ; Data segment starts here
+message DB 'Hello, World!
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# 2. Use functions as first class
+</div></div></div></div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Functions are expressions
+
+- ### They could be accepted as input to another functions 
+- ### They can be returned from another function
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+```ts
+// Function that TAKES another function as input
+function applyTwice(fn: (x: number) => number, value: number): number {
+  return fn(fn(value))
+}
+
+// Function that RETURNS another function as output
+function makeMultiplier(factor: number): (x: number) => number {
+  return (x) => x * factor
+}
+
+// Example usage:
+const double = makeMultiplier(2)   // returns a function (x) => x * 2
+const triple = makeMultiplier(3)   // returns a function (x) => x * 3
+
+console.log(applyTwice(double, 5)) // (5*2)*2 = 20
+console.log(applyTwice(triple, 2)) // (2*3)*3 = 18
+
+```
+</div>
+</div>
+</div>
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# 3. Use Simple functions
+</div>
+</div>
+</div>
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Since functions are the building block it should be as simple as possible
+</div></div></div></div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# and it should do only one thing
+</div>
+</div>
+</div>
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# 4. Curry
+</div></div></div></div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Curry it's just a mathematician name don't get curried away by the name
+</div>
+</div>
+</div>
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## It just means change multi input function to one parameter function
+</div></div></div></div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+```ts
+function addNotCurry (x: number, y: number) : number {
+	return x + y;
+}
+function addWithCurry(x: number): (y: number) => number {
+	return (y:number) => x + y;
+}
+
+const addBetter = (x: number)  =>  (y: number)=> x + y
+```
+</div>
+</div>
+</div>
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# How do we combine functions and use them
+</div></div></div></div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## since functions are building block there should be a way to combine them to make complex functions
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## There are two way to combine functions
+</div></div></div></div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+- # Pipe
+- # composition(came from maths)
+</div>
+</div>
+</div>
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Pipe
+</div>
+</div>
+</div>
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# input goes from Left to Right
+
+Think of pipeline which the input comes from Right and output is on the left
+</div></div></div></div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+```ts
+pipe(func1, func2, func3) // this means func3(func2(func1))
+```
+</div></div></div></div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Composition
+</div>
+</div>
+</div>
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## input goes from Right to Left
+</div></div></div></div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+```ts
+compose(func1,func2,func3) // this means func1(func2(func3))
+```
+
+# Change loops with recursion
+</div>
+</div>
+</div>
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Every loop can be rewritten as recursion
+</div>
+</div>
+</div>
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+```ts
+function addToBad(x: number) : number{
+	let res = 0
+	for (let i = 1; i <= x; i++) {
+		res += i
+	}
+	return res
+}
+
+function addToGood(x: number, start: number = 0):number {
+	const nextStart = start + x
+	const nextX = x - 1
+	return x < 1 ? start : addToGood(nextX, nextStart)
+}
+
+console.log(
+	addToBad(10), // 55
+	addToGood(10) // 55
+)
+
+```
+</div>
+</div>
+</div>
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Remove else if statements
+
+
+```ts
+function getGrade(score: number): string {
+  if (score >= 90) {
+    return "A"
+  } else if (score >= 80) {
+    return "B"
+  } else if (score >= 70) {
+    return "C"
+  } else if (score >= 60) {
+    return "D"
+  } else {
+    return "F"
+  }
+}
+
+const getGradeBetter = (score: number): string =>
+  score >= 90 ? "A" :
+  score >= 80 ? "B" :
+  score >= 70 ? "C" :
+  score >= 60 ? "D" :
+  "F"
+
+// there is no where clauses in ts but it would get u close
+```
+
+# While dealing with array use
+- ## Map
+- ## Reduce
+- ## Filter
+</div>
+</div>
+</div>
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+****
+## Why are we following this all rules 
+- because it helps us to better reason about out code
+- it helps us from making mistakes and miss thing
+- Let me illustrate
+</div></div></div></div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+```ts
+const add1 = (x: number) => x + 1
+const double = (x: number) => x * 2
+const square = (x: number) => x ** 2
+const isEven = (x: number) => x % 2 == 0
+
+
+const pipe = (...funcs: Function[]) => {
+	const recurse = (index: number, value: any): any => {
+		if (index >= funcs.length) return value        // base case: no more funcs
+		return recurse(index + 1, funcs[index](value)) // apply current func, recurse
+	}
+
+	return (x: any) => recurse(0, x)
+}
+const compose = (...funcs: Function[]) => {
+	const recurse = (index: number, value: any): any => {
+		if (index < 0) return value        // base case: no more funcs
+		return recurse(index - 1, funcs[index](value)) // apply current func, recurse
+	}
+	const lastFunc = funcs.length - 1
+
+	return (x: any) => recurse(lastFunc, x)
+}
+
+const input = 5
+const resultP = pipe(double, add1, square)(input) // square( ( add1( double( input))))
+const resultC = compose(double, add1, square)(input) // double( ( add1( square( input))))
+console.log(resultP, resultC)
+
+const pipeBad = (...funcs: Function[]) => {
+	return (x: any) => {
+		let result = x
+		for (const func of funcs) {
+			result = func(result)
+		}
+		return result
+	}
+}
+```
+</div></div></div></div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Example With golang
+</div></div></div></div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+<!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+// funcs
+func generate() chan int {
+	out := make(chan int)
+	go func() {
+		var recurse func(num int)
+		recurse = func(num int) {
+			if num > 5 {
+				close(out)
+				return
+			}
+			out <- num
+			recurse(num + 1)
+		}
+		recurse(1) // start from 1
+	}()
+	return out
+}
+
+func square(in chan int) chan int {
+	out := make(chan int)
+	go func() {
+		var recurse func()
+		recurse = func() {
+			num, ok := <-in
+			if !ok {
+				close(out)
+				return
+			}
+			out <- num * num
+			recurse()
+		}
+		recurse()
+	}()
+	return out
+}
+
+func double(in chan int) chan int {
+	out := make(chan int)
+	go func() {
+		var recurse func()
+		recurse = func() {
+			num, ok := <-in
+			if !ok {
+				close(out)
+				return
+			}
+			out <- num * 2
+			recurse()
+		}
+		recurse()
+	}()
+	return out
+}
+
+func isEven(num int) bool {
+	return num%2 == 0
+}
+
+// PIPEline funcs
+func pipe(first func() chan int, others ...func(chan int) chan int) chan int {
+	out := first()
+	for _, function := range others {
+		out = function(out)
+	}
+	return out
+}
+
+// filter
+func filter(condition func(int) bool) func(chan int) chan int {
+	return func(in chan int) chan int {
+		out := make(chan int)
+		go func() {
+			var recurse func()
+			recurse = func() {
+				num, ok := <-in
+				if !ok {
+					close(out)
+					return
+				}
+				isFine := condition(num)
+				if isFine {
+					out <- num
+				}
+				recurse()
+			}
+			recurse()
+		}()
+		return out
+	}
+}
+
+func main() {
+	file, err := os.Create("output.txt")
+	if err != nil {
+		fmt.Println("Error creating file ", err)
+		return
+	}
+	defer file.Close()
+
+	result := pipe(generate, square)
+
+	for i := range result {
+		_, err := file.WriteString(fmt.Sprintf("%d \n", i))
+		if err != nil {
+			fmt.Println("Error writing to file ", err)
+			return
+		}
+		fmt.Println("result: ", i)
+	}
+}
+
+
+```
+</div>  ; The string to print (DOS uses '
+</div></script></section><section  data-markdown><script type="text/template"># 2. Use functions as first class
+</script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Functions are expressions
+
+- ### They could be accepted as input to another functions 
+- ### They can be returned from another function
+</div></script></section><section  data-markdown><script type="text/template">```ts
+// Function that TAKES another function as input
+function applyTwice(fn: (x: number) => number, value: number): number {
+  return fn(fn(value))
+}
+
+// Function that RETURNS another function as output
+function makeMultiplier(factor: number): (x: number) => number {
+  return (x) => x * factor
+}
+
+// Example usage:
+const double = makeMultiplier(2)   // returns a function (x) => x * 2
+const triple = makeMultiplier(3)   // returns a function (x) => x * 3
+
+console.log(applyTwice(double, 5)) // (5*2)*2 = 20
+console.log(applyTwice(triple, 2)) // (2*3)*3 = 18
+
+```</script></section><section  data-markdown><script type="text/template"># 3. Use Simple functions</script></section><section  data-markdown><script type="text/template">## Since functions are the building block it should be as simple as possible
+</script></section><section  data-markdown><script type="text/template"># and it should do only one thing</script></section><section  data-markdown><script type="text/template"># 4. Curry
+</script></section><section  data-markdown><script type="text/template">### Curry it's just a mathematician name don't get curried away by the name</script></section><section  data-markdown><script type="text/template">## It just means change multi input function to one parameter function
+</script></section><section  data-markdown><script type="text/template">```ts
+function addNotCurry (x: number, y: number) : number {
+	return x + y;
+}
+function addWithCurry(x: number): (y: number) => number {
+	return (y:number) => x + y;
+}
+
+const addBetter = (x: number)  =>  (y: number)=> x + y
+```</script></section><section  data-markdown><script type="text/template"># How do we combine functions and use them
+</script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## since functions are building block there should be a way to combine them to make complex functions
+</div></script></section><section  data-markdown><script type="text/template">## There are two way to combine functions
+</script></section><section  data-markdown><script type="text/template">- # Pipe
+- # composition(came from maths)</script></section><section  data-markdown><script type="text/template">## Pipe</script></section><section  data-markdown><script type="text/template"># input goes from Left to Right
+
+Think of pipeline which the input comes from Right and output is on the left
+</script></section><section  data-markdown><script type="text/template">```ts
+pipe(func1, func2, func3) // this means func3(func2(func1))
+```
+</script></section><section  data-markdown><script type="text/template"># Composition</script></section><section  data-markdown><script type="text/template">## input goes from Right to Left
+</script></section><section  data-markdown><script type="text/template">
+```ts
+compose(func1,func2,func3) // this means func1(func2(func3))
+```
+
+# Change loops with recursion</script></section><section  data-markdown><script type="text/template">### Every loop can be rewritten as recursion</script></section><section  data-markdown><script type="text/template">```ts
+function addToBad(x: number) : number{
+	let res = 0
+	for (let i = 1; i <= x; i++) {
+		res += i
+	}
+	return res
+}
+
+function addToGood(x: number, start: number = 0):number {
+	const nextStart = start + x
+	const nextX = x - 1
+	return x < 1 ? start : addToGood(nextX, nextStart)
+}
+
+console.log(
+	addToBad(10), // 55
+	addToGood(10) // 55
+)
+
+```</script></section><section  data-markdown><script type="text/template">
+# Remove else if statements
+
+
+```ts
+function getGrade(score: number): string {
+  if (score >= 90) {
+    return "A"
+  } else if (score >= 80) {
+    return "B"
+  } else if (score >= 70) {
+    return "C"
+  } else if (score >= 60) {
+    return "D"
+  } else {
+    return "F"
+  }
+}
+
+const getGradeBetter = (score: number): string =>
+  score >= 90 ? "A" :
+  score >= 80 ? "B" :
+  score >= 70 ? "C" :
+  score >= 60 ? "D" :
+  "F"
+
+// there is no where clauses in ts but it would get u close
+```
+
+# While dealing with array use
+- ## Map
+- ## Reduce
+- ## Filter</script></section><section  data-markdown><script type="text/template">****
+## Why are we following this all rules 
+- because it helps us to better reason about out code
+- it helps us from making mistakes and miss thing
+- Let me illustrate
+</script></section><section  data-markdown><script type="text/template">```ts
+const add1 = (x: number) => x + 1
+const double = (x: number) => x * 2
+const square = (x: number) => x ** 2
+const isEven = (x: number) => x % 2 == 0
+
+
+const pipe = (...funcs: Function[]) => {
+	const recurse = (index: number, value: any): any => {
+		if (index >= funcs.length) return value        // base case: no more funcs
+		return recurse(index + 1, funcs[index](value)) // apply current func, recurse
+	}
+
+	return (x: any) => recurse(0, x)
+}
+const compose = (...funcs: Function[]) => {
+	const recurse = (index: number, value: any): any => {
+		if (index < 0) return value        // base case: no more funcs
+		return recurse(index - 1, funcs[index](value)) // apply current func, recurse
+	}
+	const lastFunc = funcs.length - 1
+
+	return (x: any) => recurse(lastFunc, x)
+}
+
+const input = 5
+const resultP = pipe(double, add1, square)(input) // square( ( add1( double( input))))
+const resultC = compose(double, add1, square)(input) // double( ( add1( square( input))))
+console.log(resultP, resultC)
+
+const pipeBad = (...funcs: Function[]) => {
+	return (x: any) => {
+		let result = x
+		for (const func of funcs) {
+			result = func(result)
+		}
+		return result
+	}
+}
+```
+</script></section><section  data-markdown><script type="text/template">## Example With golang
+</script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+// funcs
+func generate() chan int {
+	out := make(chan int)
+	go func() {
+		var recurse func(num int)
+		recurse = func(num int) {
+			if num > 5 {
+				close(out)
+				return
+			}
+			out <- num
+			recurse(num + 1)
+		}
+		recurse(1) // start from 1
+	}()
+	return out
+}
+
+func square(in chan int) chan int {
+	out := make(chan int)
+	go func() {
+		var recurse func()
+		recurse = func() {
+			num, ok := <-in
+			if !ok {
+				close(out)
+				return
+			}
+			out <- num * num
+			recurse()
+		}
+		recurse()
+	}()
+	return out
+}
+
+func double(in chan int) chan int {
+	out := make(chan int)
+	go func() {
+		var recurse func()
+		recurse = func() {
+			num, ok := <-in
+			if !ok {
+				close(out)
+				return
+			}
+			out <- num * 2
+			recurse()
+		}
+		recurse()
+	}()
+	return out
+}
+
+func isEven(num int) bool {
+	return num%2 == 0
+}
+
+// PIPEline funcs
+func pipe(first func() chan int, others ...func(chan int) chan int) chan int {
+	out := first()
+	for _, function := range others {
+		out = function(out)
+	}
+	return out
+}
+
+// filter
+func filter(condition func(int) bool) func(chan int) chan int {
+	return func(in chan int) chan int {
+		out := make(chan int)
+		go func() {
+			var recurse func()
+			recurse = func() {
+				num, ok := <-in
+				if !ok {
+					close(out)
+					return
+				}
+				isFine := condition(num)
+				if isFine {
+					out <- num
+				}
+				recurse()
+			}
+			recurse()
+		}()
+		return out
+	}
+}
+
+func main() {
+	file, err := os.Create("output.txt")
+	if err != nil {
+		fmt.Println("Error creating file ", err)
+		return
+	}
+	defer file.Close()
+
+	result := pipe(generate, square)
+
+	for i := range result {
+		_, err := file.WriteString(fmt.Sprintf("%d \n", i))
+		if err != nil {
+			fmt.Println("Error writing to file ", err)
+			return
+		}
+		fmt.Println("result: ", i)
+	}
+}
+
+
+``` to mark end)
+
+.CODE                  ; Code segment starts here
+MAIN PROC
+    MOV AX, @DATA      ; Load address of data segment into AX
+    MOV DS, AX         ; Initialize DS with that address
+
+    MOV AH, 09h        ; DOS function 09h: Display string until '
+</div></script></section><section  data-markdown><script type="text/template"># 2. Use functions as first class
+</script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Functions are expressions
+
+- ### They could be accepted as input to another functions 
+- ### They can be returned from another function
+</div></script></section><section  data-markdown><script type="text/template">```ts
+// Function that TAKES another function as input
+function applyTwice(fn: (x: number) => number, value: number): number {
+  return fn(fn(value))
+}
+
+// Function that RETURNS another function as output
+function makeMultiplier(factor: number): (x: number) => number {
+  return (x) => x * factor
+}
+
+// Example usage:
+const double = makeMultiplier(2)   // returns a function (x) => x * 2
+const triple = makeMultiplier(3)   // returns a function (x) => x * 3
+
+console.log(applyTwice(double, 5)) // (5*2)*2 = 20
+console.log(applyTwice(triple, 2)) // (2*3)*3 = 18
+
+```</script></section><section  data-markdown><script type="text/template"># 3. Use Simple functions</script></section><section  data-markdown><script type="text/template">## Since functions are the building block it should be as simple as possible
+</script></section><section  data-markdown><script type="text/template"># and it should do only one thing</script></section><section  data-markdown><script type="text/template"># 4. Curry
+</script></section><section  data-markdown><script type="text/template">### Curry it's just a mathematician name don't get curried away by the name</script></section><section  data-markdown><script type="text/template">## It just means change multi input function to one parameter function
+</script></section><section  data-markdown><script type="text/template">```ts
+function addNotCurry (x: number, y: number) : number {
+	return x + y;
+}
+function addWithCurry(x: number): (y: number) => number {
+	return (y:number) => x + y;
+}
+
+const addBetter = (x: number)  =>  (y: number)=> x + y
+```</script></section><section  data-markdown><script type="text/template"># How do we combine functions and use them
+</script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## since functions are building block there should be a way to combine them to make complex functions
+</div></script></section><section  data-markdown><script type="text/template">## There are two way to combine functions
+</script></section><section  data-markdown><script type="text/template">- # Pipe
+- # composition(came from maths)</script></section><section  data-markdown><script type="text/template">## Pipe</script></section><section  data-markdown><script type="text/template"># input goes from Left to Right
+
+Think of pipeline which the input comes from Right and output is on the left
+</script></section><section  data-markdown><script type="text/template">```ts
+pipe(func1, func2, func3) // this means func3(func2(func1))
+```
+</script></section><section  data-markdown><script type="text/template"># Composition</script></section><section  data-markdown><script type="text/template">## input goes from Right to Left
+</script></section><section  data-markdown><script type="text/template">
+```ts
+compose(func1,func2,func3) // this means func1(func2(func3))
+```
+
+# Change loops with recursion</script></section><section  data-markdown><script type="text/template">### Every loop can be rewritten as recursion</script></section><section  data-markdown><script type="text/template">```ts
+function addToBad(x: number) : number{
+	let res = 0
+	for (let i = 1; i <= x; i++) {
+		res += i
+	}
+	return res
+}
+
+function addToGood(x: number, start: number = 0):number {
+	const nextStart = start + x
+	const nextX = x - 1
+	return x < 1 ? start : addToGood(nextX, nextStart)
+}
+
+console.log(
+	addToBad(10), // 55
+	addToGood(10) // 55
+)
+
+```</script></section><section  data-markdown><script type="text/template">
+# Remove else if statements
+
+
+```ts
+function getGrade(score: number): string {
+  if (score >= 90) {
+    return "A"
+  } else if (score >= 80) {
+    return "B"
+  } else if (score >= 70) {
+    return "C"
+  } else if (score >= 60) {
+    return "D"
+  } else {
+    return "F"
+  }
+}
+
+const getGradeBetter = (score: number): string =>
+  score >= 90 ? "A" :
+  score >= 80 ? "B" :
+  score >= 70 ? "C" :
+  score >= 60 ? "D" :
+  "F"
+
+// there is no where clauses in ts but it would get u close
+```
+
+# While dealing with array use
+- ## Map
+- ## Reduce
+- ## Filter</script></section><section  data-markdown><script type="text/template">****
+## Why are we following this all rules 
+- because it helps us to better reason about out code
+- it helps us from making mistakes and miss thing
+- Let me illustrate
+</script></section><section  data-markdown><script type="text/template">```ts
+const add1 = (x: number) => x + 1
+const double = (x: number) => x * 2
+const square = (x: number) => x ** 2
+const isEven = (x: number) => x % 2 == 0
+
+
+const pipe = (...funcs: Function[]) => {
+	const recurse = (index: number, value: any): any => {
+		if (index >= funcs.length) return value        // base case: no more funcs
+		return recurse(index + 1, funcs[index](value)) // apply current func, recurse
+	}
+
+	return (x: any) => recurse(0, x)
+}
+const compose = (...funcs: Function[]) => {
+	const recurse = (index: number, value: any): any => {
+		if (index < 0) return value        // base case: no more funcs
+		return recurse(index - 1, funcs[index](value)) // apply current func, recurse
+	}
+	const lastFunc = funcs.length - 1
+
+	return (x: any) => recurse(lastFunc, x)
+}
+
+const input = 5
+const resultP = pipe(double, add1, square)(input) // square( ( add1( double( input))))
+const resultC = compose(double, add1, square)(input) // double( ( add1( square( input))))
+console.log(resultP, resultC)
+
+const pipeBad = (...funcs: Function[]) => {
+	return (x: any) => {
+		let result = x
+		for (const func of funcs) {
+			result = func(result)
+		}
+		return result
+	}
+}
+```
+</script></section><section  data-markdown><script type="text/template">## Example With golang
+</script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+// funcs
+func generate() chan int {
+	out := make(chan int)
+	go func() {
+		var recurse func(num int)
+		recurse = func(num int) {
+			if num > 5 {
+				close(out)
+				return
+			}
+			out <- num
+			recurse(num + 1)
+		}
+		recurse(1) // start from 1
+	}()
+	return out
+}
+
+func square(in chan int) chan int {
+	out := make(chan int)
+	go func() {
+		var recurse func()
+		recurse = func() {
+			num, ok := <-in
+			if !ok {
+				close(out)
+				return
+			}
+			out <- num * num
+			recurse()
+		}
+		recurse()
+	}()
+	return out
+}
+
+func double(in chan int) chan int {
+	out := make(chan int)
+	go func() {
+		var recurse func()
+		recurse = func() {
+			num, ok := <-in
+			if !ok {
+				close(out)
+				return
+			}
+			out <- num * 2
+			recurse()
+		}
+		recurse()
+	}()
+	return out
+}
+
+func isEven(num int) bool {
+	return num%2 == 0
+}
+
+// PIPEline funcs
+func pipe(first func() chan int, others ...func(chan int) chan int) chan int {
+	out := first()
+	for _, function := range others {
+		out = function(out)
+	}
+	return out
+}
+
+// filter
+func filter(condition func(int) bool) func(chan int) chan int {
+	return func(in chan int) chan int {
+		out := make(chan int)
+		go func() {
+			var recurse func()
+			recurse = func() {
+				num, ok := <-in
+				if !ok {
+					close(out)
+					return
+				}
+				isFine := condition(num)
+				if isFine {
+					out <- num
+				}
+				recurse()
+			}
+			recurse()
+		}()
+		return out
+	}
+}
+
+func main() {
+	file, err := os.Create("output.txt")
+	if err != nil {
+		fmt.Println("Error creating file ", err)
+		return
+	}
+	defer file.Close()
+
+	result := pipe(generate, square)
+
+	for i := range result {
+		_, err := file.WriteString(fmt.Sprintf("%d \n", i))
+		if err != nil {
+			fmt.Println("Error writing to file ", err)
+			return
+		}
+		fmt.Println("result: ", i)
+	}
+}
+
+
+```
+    LEA DX, message    ; Load address of our message into DX
+    INT 21h            ; Call DOS interrupt 21h
+
+    MOV AH, 4Ch        ; DOS function 4Ch: Exit program
+    INT 21h            ; Return control to DOS
+MAIN ENDP
+END MAIN               ; Mark the end of program and entry point
+
+```
+</div></script></section><section  data-markdown><script type="text/template"># 2. Use functions as first class
+</script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Functions are expressions
+
+- ### They could be accepted as input to another functions 
+- ### They can be returned from another function
+</div></script></section><section  data-markdown><script type="text/template">```ts
+// Function that TAKES another function as input
+function applyTwice(fn: (x: number) => number, value: number): number {
+  return fn(fn(value))
+}
+
+// Function that RETURNS another function as output
+function makeMultiplier(factor: number): (x: number) => number {
+  return (x) => x * factor
+}
+
+// Example usage:
+const double = makeMultiplier(2)   // returns a function (x) => x * 2
+const triple = makeMultiplier(3)   // returns a function (x) => x * 3
+
+console.log(applyTwice(double, 5)) // (5*2)*2 = 20
+console.log(applyTwice(triple, 2)) // (2*3)*3 = 18
+
+```</script></section><section  data-markdown><script type="text/template"># 3. Use Simple functions</script></section><section  data-markdown><script type="text/template">## Since functions are the building block it should be as simple as possible
+</script></section><section  data-markdown><script type="text/template"># and it should do only one thing</script></section><section  data-markdown><script type="text/template"># 4. Curry
+</script></section><section  data-markdown><script type="text/template">### Curry it's just a mathematician name don't get curried away by the name</script></section><section  data-markdown><script type="text/template">## It just means change multi input function to one parameter function
+</script></section><section  data-markdown><script type="text/template">```ts
+function addNotCurry (x: number, y: number) : number {
+	return x + y;
+}
+function addWithCurry(x: number): (y: number) => number {
+	return (y:number) => x + y;
+}
+
+const addBetter = (x: number)  =>  (y: number)=> x + y
+```</script></section><section  data-markdown><script type="text/template"># How do we combine functions and use them
+</script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## since functions are building block there should be a way to combine them to make complex functions
+</div></script></section><section  data-markdown><script type="text/template">## There are two way to combine functions
+</script></section><section  data-markdown><script type="text/template">- # Pipe
+- # composition(came from maths)</script></section><section  data-markdown><script type="text/template">## Pipe</script></section><section  data-markdown><script type="text/template"># input goes from Left to Right
+
+Think of pipeline which the input comes from Right and output is on the left
+</script></section><section  data-markdown><script type="text/template">```ts
+pipe(func1, func2, func3) // this means func3(func2(func1))
+```
+</script></section><section  data-markdown><script type="text/template"># Composition</script></section><section  data-markdown><script type="text/template">## input goes from Right to Left
+</script></section><section  data-markdown><script type="text/template">
+```ts
+compose(func1,func2,func3) // this means func1(func2(func3))
+```
+
+# Change loops with recursion</script></section><section  data-markdown><script type="text/template">### Every loop can be rewritten as recursion</script></section><section  data-markdown><script type="text/template">```ts
+function addToBad(x: number) : number{
+	let res = 0
+	for (let i = 1; i <= x; i++) {
+		res += i
+	}
+	return res
+}
+
+function addToGood(x: number, start: number = 0):number {
+	const nextStart = start + x
+	const nextX = x - 1
+	return x < 1 ? start : addToGood(nextX, nextStart)
+}
+
+console.log(
+	addToBad(10), // 55
+	addToGood(10) // 55
+)
+
+```</script></section><section  data-markdown><script type="text/template">
+# Remove else if statements
+
+
+```ts
+function getGrade(score: number): string {
+  if (score >= 90) {
+    return "A"
+  } else if (score >= 80) {
+    return "B"
+  } else if (score >= 70) {
+    return "C"
+  } else if (score >= 60) {
+    return "D"
+  } else {
+    return "F"
+  }
+}
+
+const getGradeBetter = (score: number): string =>
+  score >= 90 ? "A" :
+  score >= 80 ? "B" :
+  score >= 70 ? "C" :
+  score >= 60 ? "D" :
+  "F"
+
+// there is no where clauses in ts but it would get u close
+```
+
+# While dealing with array use
+- ## Map
+- ## Reduce
+- ## Filter</script></section><section  data-markdown><script type="text/template">****
+## Why are we following this all rules 
+- because it helps us to better reason about out code
+- it helps us from making mistakes and miss thing
+- Let me illustrate
+</script></section><section  data-markdown><script type="text/template">```ts
+const add1 = (x: number) => x + 1
+const double = (x: number) => x * 2
+const square = (x: number) => x ** 2
+const isEven = (x: number) => x % 2 == 0
+
+
+const pipe = (...funcs: Function[]) => {
+	const recurse = (index: number, value: any): any => {
+		if (index >= funcs.length) return value        // base case: no more funcs
+		return recurse(index + 1, funcs[index](value)) // apply current func, recurse
+	}
+
+	return (x: any) => recurse(0, x)
+}
+const compose = (...funcs: Function[]) => {
+	const recurse = (index: number, value: any): any => {
+		if (index < 0) return value        // base case: no more funcs
+		return recurse(index - 1, funcs[index](value)) // apply current func, recurse
+	}
+	const lastFunc = funcs.length - 1
+
+	return (x: any) => recurse(lastFunc, x)
+}
+
+const input = 5
+const resultP = pipe(double, add1, square)(input) // square( ( add1( double( input))))
+const resultC = compose(double, add1, square)(input) // double( ( add1( square( input))))
+console.log(resultP, resultC)
+
+const pipeBad = (...funcs: Function[]) => {
+	return (x: any) => {
+		let result = x
+		for (const func of funcs) {
+			result = func(result)
+		}
+		return result
+	}
+}
+```
+</script></section><section  data-markdown><script type="text/template">## Example With golang
+</script></section><section  data-markdown><script type="text/template">
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+// funcs
+func generate() chan int {
+	out := make(chan int)
+	go func() {
+		var recurse func(num int)
+		recurse = func(num int) {
+			if num > 5 {
+				close(out)
+				return
+			}
+			out <- num
+			recurse(num + 1)
+		}
+		recurse(1) // start from 1
+	}()
+	return out
+}
+
+func square(in chan int) chan int {
+	out := make(chan int)
+	go func() {
+		var recurse func()
+		recurse = func() {
+			num, ok := <-in
+			if !ok {
+				close(out)
+				return
+			}
+			out <- num * num
+			recurse()
+		}
+		recurse()
+	}()
+	return out
+}
+
+func double(in chan int) chan int {
+	out := make(chan int)
+	go func() {
+		var recurse func()
+		recurse = func() {
+			num, ok := <-in
+			if !ok {
+				close(out)
+				return
+			}
+			out <- num * 2
+			recurse()
+		}
+		recurse()
+	}()
+	return out
+}
+
+func isEven(num int) bool {
+	return num%2 == 0
+}
+
+// PIPEline funcs
+func pipe(first func() chan int, others ...func(chan int) chan int) chan int {
+	out := first()
+	for _, function := range others {
+		out = function(out)
+	}
+	return out
+}
+
+// filter
+func filter(condition func(int) bool) func(chan int) chan int {
+	return func(in chan int) chan int {
+		out := make(chan int)
+		go func() {
+			var recurse func()
+			recurse = func() {
+				num, ok := <-in
+				if !ok {
+					close(out)
+					return
+				}
+				isFine := condition(num)
+				if isFine {
+					out <- num
+				}
+				recurse()
+			}
+			recurse()
+		}()
+		return out
+	}
+}
+
+func main() {
+	file, err := os.Create("output.txt")
+	if err != nil {
+		fmt.Println("Error creating file ", err)
+		return
+	}
+	defer file.Close()
+
+	result := pipe(generate, square)
+
+	for i := range result {
+		_, err := file.WriteString(fmt.Sprintf("%d \n", i))
+		if err != nil {
+			fmt.Println("Error writing to file ", err)
+			return
+		}
+		fmt.Println("result: ", i)
+	}
+}
+
+
+```</script></section></div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/zoom/zoom.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/math/math.js"></script>
+	<script src="plugin/mermaid/mermaid.js"></script>
+	<script src="plugin/chart/chart.min.js"></script>
+	<script src="plugin/chart/plugin.js"></script>
+	<script src="plugin/customcontrols/plugin.js"></script>
+
+    <script>
+      function extend() {
+        var target = {};
+        for (var i = 0; i < arguments.length; i++) {
+          var source = arguments[i];
+          for (var key in source) {
+            if (source.hasOwnProperty(key)) {
+              target[key] = source[key];
+            }
+          }
+        }
+        return target;
+      }
+
+	  function isLight(color) {
+		let hex = color.replace('#', '');
+
+		// convert #fff => #ffffff
+		if(hex.length == 3){
+			hex = `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
+		}
+
+		const c_r = parseInt(hex.substr(0, 2), 16);
+		const c_g = parseInt(hex.substr(2, 2), 16);
+		const c_b = parseInt(hex.substr(4, 2), 16);
+		const brightness = ((c_r * 299) + (c_g * 587) + (c_b * 114)) / 1000;
+		return brightness > 155;
+	}
+
+	var bgColor = getComputedStyle(document.documentElement).getPropertyValue('--r-background-color').trim();
+	var isLight = isLight(bgColor);
+
+	if(isLight){
+		document.body.classList.add('has-light-background');
+	} else {
+		document.body.classList.add('has-dark-background');
+	}
+
+      // default options to init reveal.js
+      var defaultOptions = {
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        plugins: [
+          RevealMarkdown,
+          RevealHighlight,
+          RevealZoom,
+          RevealNotes,
+          RevealMath.MathJax3,
+		  RevealMermaid,
+		  RevealChart,
+		  RevealCustomControls,
+        ],
+
+
+    	allottedTime: 120 * 1000,
+
+		mathjax3: {
+			mathjax: 'plugin/math/mathjax/tex-mml-chtml.js',
+		},
+		markdown: {
+		  gfm: true,
+		  mangle: true,
+		  pedantic: false,
+		  smartLists: false,
+		  smartypants: false,
+		},
+
+		mermaid: {
+			theme: isLight ? 'default' : 'dark',
+		},
+
+		customcontrols: {
+			controls: [
+			]
+		},
+      };
+
+      // options from URL query string
+      var queryOptions = Reveal().getQueryHash() || {};
+
+      var options = extend(defaultOptions, {"width":960,"height":700,"margin":0.04,"controls":true,"progress":true,"slideNumber":false,"transition":"slide","transitionSpeed":"default"}, queryOptions);
+    </script>
+
+    <script>
+      Reveal.initialize(options);
+    </script>
+  </body>
+
+  <!-- created with Advanced Slides -->
+</html>
